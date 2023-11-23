@@ -1,10 +1,75 @@
-<p>Hello 大家好</p>
-<p>我是椰子叶，这是我的个人网站。 </p>
-<p>很高兴你来到这里</p>
-<p>我要向全世界宣布</p>
-<p>louhang是我的小宝贝</p>
-<p>是我的宝贝老公</p>
-<p>没有louhang我活不了</p>
-<p>我真的很喜欢louhang</p>
-<p>我希望他能天天开心~~~~</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .circle {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background-color: #f1f1f1;
+      text-align: center;
+      line-height: 200px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // 关键词数组
+    var keywords = ["北京", "前端", "后端", "网络架构师"];
+    var circles = [];
 
+    // 在页面上创建循环圆形
+    function createCircles() {
+      var container = document.body;
+      var radius = 200; // 圆形的半径
+      var centerX = window.innerWidth / 2; // 圆心的 X 坐标
+      var centerY = window.innerHeight / 2; // 圆心的 Y 坐标
+      var angle = (2 * Math.PI) / keywords.length; // 每个关键词之间的角度间隔
+
+      for (var i = 0; i < keywords.length; i++) {
+        var x = centerX + radius * Math.cos(i * angle);
+        var y = centerY + radius * Math.sin(i * angle);
+
+        var circle = document.createElement("div");
+        circle.className = "circle";
+        circle.style.left = x + "px";
+        circle.style.top = y + "px";
+        circle.textContent = keywords[i];
+
+        container.appendChild(circle);
+        circles.push(circle);
+      }
+    }
+
+    // 定时更新圆形的位置
+    function animateCircles() {
+      var angle = 0;
+      var speed = 0.01; // 圆形旋转的速度
+
+      setInterval(function() {
+        for (var i = 0; i < circles.length; i++) {
+          var circle = circles[i];
+          var radius = 200; // 圆形的半径
+          var centerX = window.innerWidth / 2; // 圆心的 X 坐标
+          var centerY = window.innerHeight / 2; // 圆心的 Y 坐标
+
+          var x = centerX + radius * Math.cos(angle + i * speed);
+          var y = centerY + radius * Math.sin(angle + i * speed);
+
+          circle.style.left = x + "px";
+          circle.style.top = y + "px";
+        }
+
+        angle += speed;
+      }, 10);
+    }
+
+    // 创建圆形并开始动画
+    createCircles();
+    animateCircles();
+  </script>
+</body>
+</html>
