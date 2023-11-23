@@ -1,84 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>动态词云显示</title>
   <style>
-    .circle {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #f1f1f1;
+    #wordCloud {
+      width: 500px;
+      height: 300px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
       text-align: center;
-      line-height: 50px;
-      font-size: 14px;
-      font-weight: bold;
+      font-family: Arial, sans-serif;
     }
   </style>
 </head>
 <body>
+  <div id="wordCloud"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
   <script>
-    // 关键词数组
+    // 关键词数据
     var keywords = ["北京", "前端", "后端", "网络架构师"];
-    var circles = [];
 
-    // 在页面上创建球体
-    function createSphere() {
-      var container = document.body;
-      var radius = 200; // 球体的半径
-      var angleX = (2 * Math.PI) / keywords.length; // X 轴上的角度间隔
-      var angleY = Math.PI / (keywords.length + 1); // Y 轴上的角度间隔
+    // 创建词云布局
+    var layout = d3.layout.cloud()
+      .size([500, 300])
+      .words(keywords.map(function(d) {
+        return { text: d, size: 10 + Math.random() * 40 };
+      }))
+      .padding(5)
+      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw);
 
-      for (var i = 0; i < keywords.length; i++) {
-        for (var j = 0; j < keywords.length + 1; j++) {
-          var x = radius * Math.cos(i * angleX) * Math.sin(j * angleY);
-          var y = radius * Math.sin(i * angleX) * Math.sin(j * angleY);
-          var z = radius * Math.cos(j * angleY);
+    layout.start();
 
-          var circle = document.createElement("div");
-          circle.className = "circle";
-          circle.style.transform =
-            "translate3d(" + x + "px, " + y + "px, " + z + "px)";
-          circle.textContent = keywords[i];
-
-          container.appendChild(circle);
-          circles.push(circle);
-        }
-      }
+    // 绘制词云
+    function draw(words) {
+      d3.select("#wordCloud").append("svg")
+        .attr("width", layout.size()[0])
+        .attr("height", layout.size()[1])
+        .append("g")
+        .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+        .selectAll("text")
+        .data(words)
+        .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("fill", "steelblue")
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
     }
-
-    // 定时更新球体的旋转
-    function animateSphere() {
-      var angleX = 0;
-      var angleY = 0;
-      var speedX = 0.01; // X 轴上的旋转速度
-      var speedY = 0.02; // Y 轴上的旋转速度
-
-      setInterval(function() {
-        for (var i = 0; i < circles.length; i++) {
-          var circle = circles[i];
-          var radius = 200; // 球体的半径
-          var x =
-            radius *
-            Math.cos(angleX + i * speedX) *
-            Math.sin(angleY + i * speedY);
-          var y =
-            radius *
-            Math.sin(angleX + i * speedX) *
-            Math.sin(angleY + i * speedY);
-          var z = radius * Math.cos(angleY + i * speedY);
-
-          circle.style.transform =
-            "translate3d(" + x + "px, " + y + "px, " + z + "px)";
-        }
-
-        angleX += speedX;
-        angleY += speedY;
-      }, 10);
-    }
-
-    // 创建球体并开始旋转
-    createSphere();
-    animateSphere();
   </script>
 </body>
 </html>
