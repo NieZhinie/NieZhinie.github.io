@@ -4,13 +4,13 @@
   <style>
     .circle {
       position: absolute;
-      width: 200px;
-      height: 200px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       background-color: #f1f1f1;
       text-align: center;
-      line-height: 200px;
-      font-size: 18px;
+      line-height: 50px;
+      font-size: 14px;
       font-weight: bold;
     }
   </style>
@@ -21,55 +21,64 @@
     var keywords = ["北京", "前端", "后端", "网络架构师"];
     var circles = [];
 
-    // 在页面上创建循环圆形
-    function createCircles() {
+    // 在页面上创建球体
+    function createSphere() {
       var container = document.body;
-      var radius = 200; // 圆形的半径
-      var centerX = window.innerWidth / 2; // 圆心的 X 坐标
-      var centerY = window.innerHeight / 2; // 圆心的 Y 坐标
-      var angle = (2 * Math.PI) / keywords.length; // 每个关键词之间的角度间隔
+      var radius = 200; // 球体的半径
+      var angleX = (2 * Math.PI) / keywords.length; // X 轴上的角度间隔
+      var angleY = Math.PI / (keywords.length + 1); // Y 轴上的角度间隔
 
       for (var i = 0; i < keywords.length; i++) {
-        var x = centerX + radius * Math.cos(i * angle);
-        var y = centerY + radius * Math.sin(i * angle);
+        for (var j = 0; j < keywords.length + 1; j++) {
+          var x = radius * Math.cos(i * angleX) * Math.sin(j * angleY);
+          var y = radius * Math.sin(i * angleX) * Math.sin(j * angleY);
+          var z = radius * Math.cos(j * angleY);
 
-        var circle = document.createElement("div");
-        circle.className = "circle";
-        circle.style.left = x + "px";
-        circle.style.top = y + "px";
-        circle.textContent = keywords[i];
+          var circle = document.createElement("div");
+          circle.className = "circle";
+          circle.style.transform =
+            "translate3d(" + x + "px, " + y + "px, " + z + "px)";
+          circle.textContent = keywords[i];
 
-        container.appendChild(circle);
-        circles.push(circle);
+          container.appendChild(circle);
+          circles.push(circle);
+        }
       }
     }
 
-    // 定时更新圆形的位置
-    function animateCircles() {
-      var angle = 0;
-      var speed = 0.01; // 圆形旋转的速度
+    // 定时更新球体的旋转
+    function animateSphere() {
+      var angleX = 0;
+      var angleY = 0;
+      var speedX = 0.01; // X 轴上的旋转速度
+      var speedY = 0.02; // Y 轴上的旋转速度
 
       setInterval(function() {
         for (var i = 0; i < circles.length; i++) {
           var circle = circles[i];
-          var radius = 200; // 圆形的半径
-          var centerX = window.innerWidth / 2; // 圆心的 X 坐标
-          var centerY = window.innerHeight / 2; // 圆心的 Y 坐标
+          var radius = 200; // 球体的半径
+          var x =
+            radius *
+            Math.cos(angleX + i * speedX) *
+            Math.sin(angleY + i * speedY);
+          var y =
+            radius *
+            Math.sin(angleX + i * speedX) *
+            Math.sin(angleY + i * speedY);
+          var z = radius * Math.cos(angleY + i * speedY);
 
-          var x = centerX + radius * Math.cos(angle + i * speed);
-          var y = centerY + radius * Math.sin(angle + i * speed);
-
-          circle.style.left = x + "px";
-          circle.style.top = y + "px";
+          circle.style.transform =
+            "translate3d(" + x + "px, " + y + "px, " + z + "px)";
         }
 
-        angle += speed;
+        angleX += speedX;
+        angleY += speedY;
       }, 10);
     }
 
-    // 创建圆形并开始动画
-    createCircles();
-    animateCircles();
+    // 创建球体并开始旋转
+    createSphere();
+    animateSphere();
   </script>
 </body>
 </html>
